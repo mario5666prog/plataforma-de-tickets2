@@ -28,7 +28,9 @@ import {
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
-import { AlertCircle, PlusCircle, Pencil, Trash2, Save, XCircle, LogIn, LogOut, UserPlus, Users, Briefcase, Phone, Mail, IdCard, Calendar, CheckCircle } from 'lucide-react'; // Importa iconos
+import {
+    AlertCircle, PlusCircle, Pencil, Trash2, Save, XCircle, LogIn, LogOut, UserPlus, Users, Briefcase, Phone, Mail, IdCard, Calendar, CheckCircle
+} from 'lucide-react'; // Importa iconos
 import { motion, AnimatePresence } from 'framer-motion';
 import { cn } from "@/lib/utils"
 
@@ -180,7 +182,7 @@ const TicketForm: React.FC<{
                                 <SelectItem value="Soporte">Soporte</SelectItem>
                                 <SelectItem value="Incidencia">Incidencia</SelectItem>
                                 <SelectItem value="Consulta">Consulta</SelectItem>
-                                <SelectItem value="Problema">Problema</SelectItem>
+                                 <SelectItem value="Problema">Problema</SelectItem>
                                 <SelectItem value="Requerimiento">Requerimiento</SelectItem>
                             </SelectContent>
                         </Select>
@@ -209,7 +211,7 @@ const TicketForm: React.FC<{
                         <Label htmlFor="estatus" className="text-right">Estatus</Label>
                         <Select onValueChange={setEstatus} value={estatus}>
                             <SelectTrigger className="col-span-3">
-                                <SelectValue placeholder="Selecciona un estatus" />
+                                 <SelectValue placeholder="Selecciona un estatus" />
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectItem value="Abierto">Abierto</SelectItem>
@@ -319,7 +321,7 @@ const ListaTickets: React.FC<{
                                 <TableCell className="text-gray-700 dark:text-gray-300">{ticket.estatus}</TableCell>
                                 <TableCell className="text-gray-700 dark:text-gray-300">{ticket.asesorQueAtiende}</TableCell>
                                 <TableCell className="text-gray-700 dark:text-gray-300">{ticket.empresa}</TableCell>
-                                <TableCell className="text-gray-700 dark:text-gray-300">{ticket.descripcion}</TableCell> {/* Muestra la descripción */}
+                                 <TableCell className="text-gray-700 dark:text-gray-300">{ticket.descripcion}</TableCell> {/* Muestra la descripción */}
                                 <TableCell className="text-right space-x-2">
                                     <Button
                                         variant="outline"
@@ -359,7 +361,7 @@ const HelpDeskApp = () => {
     const [usuarioLogueado, setUsuarioLogueado] = useState<Usuario | null>(null);
     const [isSignUpModalOpen, setIsSignUpModalOpen] = useState(false); // Estado para el modal de registro
     const [loginError, setLoginError] = useState<string | null>(null);  // Estado para manejar errores de login
-    const [mostrarTickets, setMostrarTickets] = useState(false);
+     const [mostrarTickets, setMostrarTickets] = useState(false);
 
 
     // Valores de prueba para el inicio de sesión
@@ -379,7 +381,7 @@ const HelpDeskApp = () => {
             setUsuarios(JSON.parse(storedUsuarios));
         }
         if (storedUsuarioLogueado) {
-            const usuario = JSON.parse(storedUsuarioLogueado);
+             const usuario = JSON.parse(storedUsuarioLogueado);
             // Verificar que el objeto tenga las propiedades antes de usarlo.
             if (usuario && usuario.correo && usuario.contrasena) {
                 setUsuarioLogueado(usuario);
@@ -399,12 +401,12 @@ const HelpDeskApp = () => {
     }, [tickets, usuarios, usuarioLogueado]);
 
     const handleAgregarTicket = (nuevoTicket: Ticket) => {
-        if (tickets.find(t => t.idTicket === nuevoTicket.idTicket)) {
+         if (tickets.find(t => t.idTicket === nuevoTicket.idTicket)) {
             // Si ya existe, actualiza
             setTickets(tickets.map(t => t.idTicket === nuevoTicket.idTicket ? nuevoTicket : t));
         } else {
             // Si no existe, agrega uno nuevo
-            setTickets([...tickets, nuevoTicket]);
+             setTickets([...tickets, nuevoTicket]);
         }
     };
 
@@ -419,26 +421,23 @@ const HelpDeskApp = () => {
 
     const ticketAEditar = editingTicketId ? tickets.find((ticket) => ticket.idTicket === editingTicketId) : undefined;
 
-    // Autenticación: Login
+     // Autenticación: Login
     const handleLogin = (correo: string, contrasena: string) => {
-        const usuarioEncontrado = usuarios.find(u => u.correo === correo && u.contrasena === contrasena);
-        if (usuarioEncontrado) {
-            setUsuarioLogueado(usuarioEncontrado);
+        // Usa los valores de prueba directamente
+        if (correo === pruebaCorreo && contrasena === pruebaContrasena) {
+            const usuarioPrueba: Usuario = {
+                id: generarId(),
+                nombre: 'Mario Prueba', // Puedes cambiar el nombre
+                correo: pruebaCorreo,
+                contrasena: pruebaContrasena,
+                rol: 'admin' // Puedes ajustar el rol si es necesario
+            };
+            setUsuarioLogueado(usuarioPrueba);
             setLoginError(null);
             setMostrarTickets(true); // Mostrar los tickets después del login
         } else {
-            // Si el usuario no existe, crea uno nuevo con los datos proporcionados
-            const nuevoUsuario: Usuario = {
-                id: generarId(),
-                nombre: correo, // Puedes usar el correo como nombre por defecto o pedir el nombre en el formulario de login
-                correo: correo,
-                contrasena: contrasena,
-                rol: 'usuario' // Rol por defecto
-            };
-            setUsuarios([...usuarios, nuevoUsuario]); // Agrega el nuevo usuario a la lista
-            setUsuarioLogueado(nuevoUsuario);  // Inicia sesión con el nuevo usuario
-            setLoginError(null);
-            setMostrarTickets(true);
+            setLoginError('Correo o contraseña incorrectos.');
+            setMostrarTickets(false);
         }
     };
 
@@ -449,18 +448,11 @@ const HelpDeskApp = () => {
     };
 
     // Autenticación: Registro de usuario
-    const handleSignUp = (nuevoUsuario: Usuario) => {
+     const handleSignUp = (nuevoUsuario: Usuario) => {
         // Permite cualquier correo y contraseña
         if (!nuevoUsuario.nombre || !nuevoUsuario.correo || !nuevoUsuario.contrasena) {
             return { success: false, error: 'Por favor, complete todos los campos.' };
         }
-
-        // Verificar si el correo ya existe
-        const correoExistente = usuarios.find(u => u.correo === nuevoUsuario.correo);
-        if (correoExistente) {
-            return { success: false, error: 'El correo electrónico ya está registrado.' };
-        }
-
         const usuarioConRol = { ...nuevoUsuario, rol: 'usuario' };
         setUsuarios([...usuarios, usuarioConRol]);
         return { success: true, error: null };
@@ -494,7 +486,7 @@ const HelpDeskApp = () => {
                         onChange={(e) => setCorreo(e.target.value)}
                         required
                         className="mt-1 w-full"
-                        placeholder="Ingrese su correo electrónico"
+                        placeholder="mario123@gmail.com"
                     />
                 </div>
                 <div>
@@ -506,11 +498,11 @@ const HelpDeskApp = () => {
                         onChange={(e) => setContrasena(e.target.value)}
                         required
                         className="mt-1 w-full"
-                        placeholder="Ingrese su contraseña"
+                        placeholder="123"
                     />
                 </div>
                 <Button type="submit" className="w-full bg-blue-500 hover:bg-blue-600 text-white dark:bg-blue-700 dark:hover:bg-blue-800">
-                    <LogIn className="mr-2 h-4 w-4" /> Iniciar sesión
+                        <LogIn className="mr-2 h-4 w-4" /> Iniciar sesión
                 </Button>
                 <Button
                     type="button"
